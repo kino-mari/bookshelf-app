@@ -5,14 +5,14 @@ erDiagram
     users ||--o{ books : ""
     users ||--o{ reviews : ""
     users ||--o{ book_user : ""
-    users ||--o{ review_user : ""
+    users ||--o{ review_likes : ""
 
     books ||--o{ reviews : ""
     books ||--o{ book_genre : ""
     books ||--o{ book_user : ""
 
     genres ||--o{ book_genre : ""
-    reviews ||--o{ review_user : ""
+    reviews ||--o{ review_likes : ""
 
     users {
         bigint_unsigned id PK
@@ -71,7 +71,7 @@ erDiagram
         timestamp updated_at
     }
 
-    review_user {
+    review_likes {
         bigint_unsigned id PK
         bigint_unsigned user_id FK
         bigint_unsigned review_id FK
