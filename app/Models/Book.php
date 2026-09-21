@@ -24,6 +24,7 @@ class Book extends Model
     //日付型などのキャスト定義
     protected $casts = [
         'published_at' => 'date',
+        'reviews_avg_rating' => 'float',
     ];
 
     public function user(): BelongsTo
