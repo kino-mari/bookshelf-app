@@ -41,6 +41,8 @@ Route::middleware('auth')->group(function () {
     // レビューの編集・削除
     Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+    //更新処理
+    Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
 
     //お気に入り一覧画面
     Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');

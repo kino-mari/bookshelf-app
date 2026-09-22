@@ -46,6 +46,19 @@ class ReviewController extends Controller
         return view('reviews.edit', compact('review'));
     }
 
+    public function update(ReviewRequest $request, Review $review): RedirectResponse
+    {
+        // 1. 作成者本人か確認（Policyのupdateメソッドを実行）
+        $this->authorize('update', $review);
+
+        // 2. バリデーション済みデータで書籍情報を更新
+        $review->update($request->validated());
+
+        return redirect()
+            ->route('books.show', $review->book_id) // または $review->book
+            ->with('success', 'レビューを更新しました。');
+    }
+
     /**
      * DELETE /reviews/{review}（レビュー削除処理）
      */
