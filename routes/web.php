@@ -25,17 +25,26 @@ Route::middleware('auth')->group(function () {
     Route::post('/books/{book}/favorites', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
     //評価
     Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
-    //いいねトグル
-    Route::post('/reviews/{review}/like', [ReviewController::class, 'toggle'])
-        ->name('reviews.like');
+
     // 書籍の編集・削除
     Route::get('/books/{book}/edit', [BookController::class, 'edit'])->name('books.edit');
     Route::delete('/books/{book}', [BookController::class, 'destroy'])->name('books.destroy');
+    // 更新処理
+    Route::put('/books/{book}', [BookController::class, 'update'])->name('books.update');
+
+
+    //いいねトグル
+    Route::post('/reviews/{review}/like', [ReviewController::class, 'toggle'])
+        ->name('reviews.like');
+
+
     // レビューの編集・削除
     Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+
     //お気に入り一覧画面
     Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+
     //ジャンル
     Route::get('/genres', [GenreController::class, 'index'])->name('genres.index');
 

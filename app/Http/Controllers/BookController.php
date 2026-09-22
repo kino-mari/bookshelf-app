@@ -7,7 +7,7 @@ use App\Models\Book;
 use App\Models\Genre;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use App\Http\Requests\BookStoreRequest;
+use App\Http\Requests\BookRequest;
 use Illuminate\Support\Facades\Auth;
 
 class BookController extends Controller
@@ -44,10 +44,28 @@ class BookController extends Controller
     {
         // 作成者本人か確認（Policyのupdateメソッドを実行）
         $this->authorize('update', $book);
+        // 編集フォームのチェックボックス用に全ジャンルを取得
+        $genres = Genre::all();
 
-        return view('books.edit', compact('book'));
+        return view('books.edit', compact('book', 'genres'));
     }
 
+    public function update(BookRequest $request, Book $book): RedirectResponse
+    {
+        // 1. 作成者本人か確認（Policyのupdateメソッドを実行）
+        $this->authorize('update', $book);
+
+        // 2. バリデーション済みデータで書籍情報を更新
+        $book->update($request->validated());
+
+        // 3. ジャンルの中間テーブル紐付けを同期（syncで差分を自動更新）
+        $book->genres()->sync($request->input('genres'));
+
+        // 4. 詳細画面へリダイレクト
+        return redirect()
+            ->route('books.show', $book)
+            ->with('success', '書籍情報を更新しました。');
+    }
     /**
      * DELETE /books/{book}（書籍削除処理）
      */
@@ -62,7 +80,7 @@ class BookController extends Controller
         return redirect()->route('books.index')->with('status', '書籍を削除しました。');
     }
 
-    public function store(BookStoreRequest $request)
+    public function store(BookRequest $request)
     {
         // 1. バリデーション済みデータを取得
         $validated = $request->validated();
