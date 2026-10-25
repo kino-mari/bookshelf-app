@@ -24,7 +24,7 @@ class ReviewController extends Controller
             'comment' => $validated['comment'],
         ]);
 
-        return back()->with('status', 'レビューを投稿しました。');
+        return back()->with('success', 'レビューを投稿しました。');
     }
 
     public function toggle(Review $review): RedirectResponse
@@ -70,7 +70,7 @@ class ReviewController extends Controller
         // レビューの削除（関連するいいねも自動処理される）
         $review->delete();
 
-        return back()->with('status', 'レビューを削除しました。');
+        return back()->with('success', 'レビューを削除しました。');
     }
 
 

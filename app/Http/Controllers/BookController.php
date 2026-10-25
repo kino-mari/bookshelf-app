@@ -77,7 +77,7 @@ class BookController extends Controller
         // 書籍の削除（関連するレビュー・お気に入り・ジャンルも自動処理される）
         $book->delete();
 
-        return redirect()->route('books.index')->with('status', '書籍を削除しました。');
+        return redirect()->route('books.index')->with('success', '書籍を削除しました。');
     }
 
     public function store(BookRequest $request)

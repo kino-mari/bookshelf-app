@@ -49,6 +49,15 @@ Route::middleware('auth')->group(function () {
 
     //ジャンル
     Route::get('/genres', [GenreController::class, 'index'])->name('genres.index');
+    Route::get('genres/create', [GenreController::class, 'create'])->name('genres.create');
+    Route::get('genres/{genre}', [GenreController::class, 'show'])->name('genres.show');
+    Route::post('/genres', [GenreController::class, 'store'])->name('genres.store');
+    Route::get('genres/{genre}/edit', [GenreController::class, 'edit'])->name('genres.edit');
+    // ジャンル更新処理（※追加）
+    Route::put('/genres/{genre}', [GenreController::class, 'update'])->name('genres.update');
+    // ジャンル削除処理（※要件にあったDELETEを追加）
+    Route::delete('/genres/{genre}', [GenreController::class, 'destroy'])->name('genres.destroy');
+
 
 });
 
