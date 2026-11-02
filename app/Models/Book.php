@@ -48,4 +48,9 @@ class Book extends Model
         return $this->belongsToMany(User::class, 'book_user', 'book_id', 'user_id')->withTimestamps();
     }
 
+    public function readingPlans(): HasMany
+    {
+        return $this->hasMany(ReadingPlan::class);
+    }
+
 }

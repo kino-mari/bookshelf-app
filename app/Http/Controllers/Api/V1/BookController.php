@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\BookIndexRequest;
 use App\Http\Requests\Api\V1\BookRequest;
-use App\Http\Resources\BookDetailResource;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -63,7 +62,7 @@ class BookController extends Controller
             // ジャンル情報とレビュー（投稿者情報含む）を事前ロード
             $book = Book::with(['genres', 'reviews.user'])->findOrFail($id);
 
-            return new BookDetailResource($book);
+            return new BookResource($book);
 
         } catch (ModelNotFoundException $e) {
             return response()->json([
@@ -114,6 +113,7 @@ class BookController extends Controller
     {
         try {
             $book = Book::findOrFail($id);
+            $this->authorize('update', $book);
 
             $validated = $request->validated();
 
@@ -152,6 +152,7 @@ class BookController extends Controller
     {
         try {
             $book = Book::findOrFail($id);
+            $this->authorize('delete', $book);
 
             DB::transaction(function () use ($book) {
                 // 関連データの削除処理
