@@ -4,24 +4,22 @@ namespace App\Policies;
 
 use App\Models\Book;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class BookPolicy
 {
     /**
-     * Determine whether the user can view any models.
+     * ユーザーが書籍を更新できるか確認する
      */
     public function update(User $user, Book $book): bool
     {
-        return $user->id === $book->user_id;
+        return (int) $user->id === (int) $book->user_id;
     }
 
     /**
-     * Determine whether the user can delete the model.
+     * ユーザーが書籍を削除できるか確認する
      */
     public function delete(User $user, Book $book): bool
     {
-        return $user->id === $book->user_id;
+        return (int) $user->id === (int) $book->user_id;
     }
-
 }

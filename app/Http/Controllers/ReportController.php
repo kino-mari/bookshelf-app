@@ -2,25 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\View\View;
 use App\Models\Book;
 use App\Models\Review;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class ReportController extends Controller
 {
     /**
      * マイ読書レポート画面を表示する
      *
-     * @param Request $request リクエストインスタンス
+     * @param  Request  $request  リクエストインスタンス
      * @return View マイ読書レポート画面
      */
     public function index(Request $request): View
     {
         $userId = Auth::id();
 
-        // 基本サマリー
         $totalReviews = Review::where('user_id', $userId)->count();
 
         $readBooks = Review::where('user_id', $userId)
@@ -68,7 +67,6 @@ class ReportController extends Controller
             ->limit(5)
             ->get();
 
-        // Bladeファイルが使う形式にまとめる
         $stats = [
             'summary' => [
                 'total_reviews' => $totalReviews,

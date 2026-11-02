@@ -10,7 +10,7 @@ use Illuminate\Database\Seeder;
 class BookSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * 書籍の初期データを登録する
      */
     public function run(): void
     {
@@ -18,6 +18,7 @@ class BookSeeder extends Seeder
 
         if ($users->isEmpty()) {
             $this->command->info('ユーザーが存在しません。先にUserSeederを実行してください。');
+
             return;
         }
 

@@ -8,63 +8,69 @@ use App\Http\Requests\Api\V1\BookRequest;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 
 class BookController extends Controller
 {
     /**
-     * AP01: 書籍一覧API
-     * GET /api/v1/books
+     * 書籍一覧を取得する
+     * キーワード検索、ジャンル絞り込み、ページネーションに対応
      */
-    public function index(BookIndexRequest $request)
+    public function index(BookIndexRequest $request): AnonymousResourceCollection
     {
+        // バリデーション済みの値を取得
         $validated = $request->validated();
 
+        // 書籍の検索クエリを作成
         $query = Book::query();
 
-        // ジャンル情報、平均評価、レビュー件数を取得（N+1問題対策）
+        // ジャンル、レビュー平均、レビュー件数をまとめて取得
         $query->with('genres')
             ->withAvg('reviews', 'rating')
             ->withCount('reviews');
 
-        // キーワード検索（タイトルまたは著者名）
-        if (!empty($validated['keyword'])) {
+        // キーワード検索
+        if (! empty($validated['keyword'])) {
             $keyword = $validated['keyword'];
+
             $query->where(function ($q) use ($keyword) {
                 $q->where('title', 'like', "%{$keyword}%")
                     ->orWhere('author', 'like', "%{$keyword}%");
             });
         }
 
-        // ジャンルでの絞り込み
-        if (!empty($validated['genre_id'])) {
+        // ジャンルで絞り込み
+        if (! empty($validated['genre_id'])) {
             $genreId = $validated['genre_id'];
-            $query->whereHas('genres', function ($q) use ($genreId) {
-                $q->where('genres.id', $genreId);
+
+            $query->where(function ($q) use ($keyword) {
+                $q->where('title', 'like', "%{$keyword}%")
+                    ->orWhere('author', 'like', "%{$keyword}%");
             });
         }
 
-        // ページネーション処理
+        // 1ページあたりの表示件数（指定がなければ10件）
         $perPage = $validated['per_page'] ?? 10;
+
+        // ページネーション
         $books = $query->paginate($perPage);
 
         return BookResource::collection($books);
     }
 
     /**
-     * AP02: 書籍詳細API
-     * GET /api/v1/books/{id}
+     * 指定した書籍の詳細を取得する
      */
-    public function show(string $id)
+    public function show(string $id): BookResource|JsonResponse
     {
         try {
-            // 指定IDの書籍を取得（存在しない場合は 404）
-            // ジャンル情報とレビュー（投稿者情報含む）を事前ロード
-            $book = Book::with(['genres', 'reviews.user'])->findOrFail($id);
+            $book = Book::with(['genres', 'reviews.user'])
+                ->findOrFail($id);
 
             return new BookResource($book);
-
-        } catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException) {
             return response()->json([
                 'status' => 'error',
                 'message' => '指定された書籍が見つかりませんでした',
@@ -73,31 +79,36 @@ class BookController extends Controller
     }
 
     /**
-     * AP03: 書籍登録API
-     * POST /api/v1/books
+     * 書籍を新規登録する
      */
-    public function store(BookRequest $request)
+    public function store(BookRequest $request): JsonResponse
     {
+        // バリデーション済みの値を取得
         $validated = $request->validated();
 
-        $book = DB::transaction(function () use ($request, $validated) {
-            // ログイン中のユーザーIDを自動で追加して書籍データを登録する
-            $data = $request->except('genres');
-            $data['user_id'] = auth()->id(); // ← これを追加！
+        // ジャンルIDを取り出す
+        $genreIds = $validated['genres'];
 
+        // DBのカラム名に合わせて変換
+        $data = $validated;
+        $data['user_id'] = $request->user()->id;
+        $data['published_at'] = $data['published_date'];
+
+        // DBに存在しない項目を取り除く
+        unset($data['published_date'], $data['genres']);
+
+        // 書籍登録とジャンル登録をまとめて実行
+        $book = DB::transaction(function () use ($data, $genreIds) {
             $book = Book::create($data);
 
-            // 多対多リレーション（ジャンル）の紐付け
-            if (isset($validated['genres'])) {
-                $book->genres()->sync($validated['genres']);
-            }
+            $book->genres()->sync($genreIds);
 
             return $book;
         });
 
+        // ジャンル情報を取得
         $book->load('genres');
 
-        // 登録成功時: 201 Created
         return response()->json([
             'status' => 'success',
             'message' => '書籍を登録しました',
@@ -106,37 +117,46 @@ class BookController extends Controller
     }
 
     /**
-     * AP04: 書籍更新API
-     * PUT /api/v1/books/{id}
+     * 指定した書籍を更新する
      */
-    public function update(BookRequest $request, string $id)
+    public function update(BookRequest $request, string $id): JsonResponse
     {
         try {
+            // 更新対象の書籍を取得
             $book = Book::findOrFail($id);
+
+            // 書籍の所有者かどうかを確認
             $this->authorize('update', $book);
 
+            // バリデーション済みの値を取得
             $validated = $request->validated();
 
-            DB::transaction(function () use ($book, $validated) {
-                // 書籍データの更新
-                $book->update($validated);
+            // ジャンルIDを取り出す
+            $genreIds = $validated['genres'];
 
-                // ジャンル紐付けの更新
-                if (isset($validated['genres'])) {
-                    $book->genres()->sync($validated['genres']);
-                }
+            // DBのカラム名に合わせて変換
+            $data = $validated;
+            $data['published_at'] = $data['published_date'];
+
+            // DBに存在しない項目を取り除く
+            unset($data['published_date'], $data['genres']);
+
+            // 書籍情報とジャンル情報をまとめて更新
+            DB::transaction(function () use ($book, $data, $genreIds) {
+                $book->update($data);
+
+                $book->genres()->sync($genreIds);
             });
 
+            // 更新後のジャンル情報を取得
             $book->load('genres');
 
-            // 更新成功時: 200 OK
             return response()->json([
                 'status' => 'success',
-                'message' => '書籍情報を更新しました',
+                'message' => '書籍を更新しました',
                 'data' => new BookResource($book),
             ], 200);
-
-        } catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException) {
             return response()->json([
                 'status' => 'error',
                 'message' => '指定された書籍が見つかりませんでした',
@@ -145,36 +165,37 @@ class BookController extends Controller
     }
 
     /**
-     * AP05: 書籍削除API
-     * DELETE /api/v1/books/{id}
+     * 指定した書籍を削除する
      */
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
         try {
+            // 削除対象の書籍を取得
             $book = Book::findOrFail($id);
+
+            // 書籍の所有者かどうかを確認
             $this->authorize('delete', $book);
 
+            // 関連データと書籍をまとめて削除
             DB::transaction(function () use ($book) {
-                // 関連データの削除処理
-                $book->genres()->detach();  // ジャンル紐付け（中間テーブル）の解除
-                $book->reviews()->delete(); // 関連するレビューの削除
+                // ジャンルとの関連を解除
+                $book->genres()->detach();
 
-                // お気に入りリレーションが定義されている場合
-                if (method_exists($book, 'favorites')) {
-                    $book->favorites()->delete();
-                }
+                // お気に入りとの関連を解除
+                $book->favoritedByUsers()->detach();
 
-                // 書籍本体の削除
+                // レビューを削除
+                $book->reviews()->delete();
+
+                // 書籍を削除
                 $book->delete();
             });
 
-            // 削除成功時: 200 OK（メッセージ付き）または 204 No Content
             return response()->json([
                 'status' => 'success',
                 'message' => '書籍を削除しました',
             ], 200);
-
-        } catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException) {
             return response()->json([
                 'status' => 'error',
                 'message' => '指定された書籍が見つかりませんでした',

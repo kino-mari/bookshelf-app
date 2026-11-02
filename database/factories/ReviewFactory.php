@@ -3,32 +3,32 @@
 namespace Database\Factories;
 
 use App\Models\Book;
-use App\Models\User;
 use App\Models\Review;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Review>
+ * @extends Factory<Review>
  */
 class ReviewFactory extends Factory
 {
     protected $model = Review::class;
 
     /**
-     * Define the model's default state.
+     * レビューのダミーデータを定義する
      *
      * @return array<string, mixed>
      */
     public function definition(): array
     {
         return [
-            // リレーション: 自動でUserおよびBookを作成してIDを割り当てる
+            // 紐づくユーザーと書籍を自動作成する
             'user_id' => User::factory(),
             'book_id' => Book::factory(),
 
-            // カラムの型に合わせたダミーデータ (Faker)
-            'rating' => fake()->numberBetween(1, 5),    // 1〜5の評価
-            'comment' => fake()->realText(200),         // レビューコメント
+            // レビューのダミーデータ
+            'rating' => fake()->numberBetween(1, 5),
+            'comment' => fake()->realText(200),
         ];
     }
 }

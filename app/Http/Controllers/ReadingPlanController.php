@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ReadingPlan;
 use App\Http\Requests\ReadingPlanRequest;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Book;
-
+use App\Models\ReadingPlan;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class ReadingPlanController extends Controller
 {
@@ -50,6 +49,7 @@ class ReadingPlanController extends Controller
     public function create(): View
     {
         $books = Book::all();
+
         return view('reading-plans.create', compact('books'));
     }
 
@@ -58,10 +58,13 @@ class ReadingPlanController extends Controller
      */
     public function store(ReadingPlanRequest $request): RedirectResponse
     {
+        // バリデーション済みのデータを取得
+        $validated = $request->validated();
+
         ReadingPlan::create([
             'user_id' => Auth::id(),
-            'book_id' => $request->book_id,
-            'due_date' => $request->due_date,
+            'book_id' => $validated['book_id'],
+            'due_date' => $validated['due_date'],
             'status' => 0,
         ]);
 
@@ -77,8 +80,10 @@ class ReadingPlanController extends Controller
     {
         $this->authorize('update', $plan);
 
+        $validated = $request->validated();
+
         $plan->update([
-            'due_date' => $request->target_date,
+            'due_date' => $validated['due_date'],
         ]);
 
         return redirect()->route('reading-plans.index')
@@ -86,7 +91,6 @@ class ReadingPlanController extends Controller
     }
 
     /**
-     *
      * 読書計画編集画面を表示する
      */
     public function edit(ReadingPlan $plan): View

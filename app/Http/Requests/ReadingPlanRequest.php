@@ -43,7 +43,7 @@ class ReadingPlanRequest extends FormRequest
                     'integer',
                     'exists:books,id',
                     Rule::unique('reading_plans', 'book_id')
-                        ->where(fn($query) => $query->where(
+                        ->where(fn ($query) => $query->where(
                             'user_id',
                             $this->user()->id
                         )),
@@ -58,7 +58,7 @@ class ReadingPlanRequest extends FormRequest
 
         // 編集の場合
         return [
-            'target_date' => [
+            'due_date' => [
                 'required',
                 'date',
                 'after_or_equal:today',
@@ -66,6 +66,9 @@ class ReadingPlanRequest extends FormRequest
         ];
     }
 
+    /**
+     * 日本語のエラーメッセージ
+     */
     public function messages(): array
     {
         return [
@@ -77,10 +80,6 @@ class ReadingPlanRequest extends FormRequest
             'due_date.required' => '読了予定日を入力してください。',
             'due_date.date' => '正しい日付を入力してください。',
             'due_date.after_or_equal' => '読了予定日は今日以降の日付を指定してください。',
-
-            'target_date.required' => '読了予定日を入力してください。',
-            'target_date.date' => '正しい日付を入力してください。',
-            'target_date.after_or_equal' => '読了予定日は今日以降の日付を指定してください。',
         ];
     }
 }

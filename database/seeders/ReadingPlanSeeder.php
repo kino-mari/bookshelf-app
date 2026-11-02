@@ -18,8 +18,9 @@ class ReadingPlanSeeder extends Seeder
         $yamada = User::where('email', 'yamada@example.com')->first();
         $suzuki = User::where('email', 'suzuki@example.com')->first();
 
-        if (!$yamada || !$suzuki) {
+        if (! $yamada || ! $suzuki) {
             $this->command->info('山田太郎または鈴木花子が存在しません。先にUserSeederを実行してください。');
+
             return;
         }
 
@@ -27,6 +28,7 @@ class ReadingPlanSeeder extends Seeder
 
         if ($books->count() < 6) {
             $this->command->info('書籍データが6件以上必要です。先にBookSeederを実行してください。');
+
             return;
         }
 

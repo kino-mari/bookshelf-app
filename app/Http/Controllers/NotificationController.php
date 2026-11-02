@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class NotificationController extends Controller
 {
@@ -21,6 +20,7 @@ class NotificationController extends Controller
 
         return view('notifications.index', compact('notifications'));
     }
+
     /**
      * 通知を既読にする
      */

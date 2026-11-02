@@ -9,7 +9,7 @@ use Illuminate\Database\Seeder;
 class FavoriteSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * お気に入りの初期データを登録する
      */
     public function run(): void
     {

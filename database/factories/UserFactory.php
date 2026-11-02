@@ -2,22 +2,23 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends Factory<User>
  */
 class UserFactory extends Factory
 {
     /**
-     * The current password being used by the factory.
+     * Factoryで使用するパスワード
      */
     protected static ?string $password;
 
     /**
-     * Define the model's default state.
+     * ユーザーのダミーデータを定義する
      *
      * @return array<string, mixed>
      */
@@ -33,7 +34,7 @@ class UserFactory extends Factory
     }
 
     /**
-     * Indicate that the model's email address should be unverified.
+     * メール未認証のユーザーを作成する状態を定義する
      */
     public function unverified(): static
     {

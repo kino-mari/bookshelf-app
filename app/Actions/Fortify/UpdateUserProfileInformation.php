@@ -12,11 +12,12 @@ use Laravel\Fortify\Contracts\UpdatesUserProfileInformation;
 class UpdateUserProfileInformation implements UpdatesUserProfileInformation
 {
     /**
-     * Validate and update the given user's profile information.
+     * ユーザーのプロフィール情報を検証して更新する
      *
-     * @param  array<string, string>  $input
+     * @param  User  $user  更新対象のユーザー
+     * @param  array<string, string>  $input  入力されたプロフィール情報
      *
-     * @throws ValidationException
+     * @throws ValidationException バリデーションエラー
      */
     public function update(User $user, array $input): void
     {
@@ -32,8 +33,10 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             ],
         ])->validateWithBag('updateProfileInformation');
 
-        if ($input['email'] !== $user->email &&
-            $user instanceof MustVerifyEmail) {
+        if (
+            $input['email'] !== $user->email &&
+            $user instanceof MustVerifyEmail
+        ) {
             $this->updateVerifiedUser($user, $input);
         } else {
             $user->forceFill([
@@ -44,9 +47,10 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
     }
 
     /**
-     * Update the given verified user's profile information.
+     * メールアドレスの認証が必要なユーザーのプロフィール情報を更新する
      *
-     * @param  array<string, string>  $input
+     * @param  User  $user  更新対象のユーザー
+     * @param  array<string, string>  $input  入力されたプロフィール情報
      */
     protected function updateVerifiedUser(User $user, array $input): void
     {

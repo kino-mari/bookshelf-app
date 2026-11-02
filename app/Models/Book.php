@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Book extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'user_id',
         'title',
@@ -21,7 +22,7 @@ class Book extends Model
         'image_url',
     ];
 
-    //日付型などのキャスト定義
+    // 日付型などのキャスト定義
     protected $casts = [
         'published_date' => 'date',
         'reviews_avg_rating' => 'float',
@@ -52,5 +53,4 @@ class Book extends Model
     {
         return $this->hasMany(ReadingPlan::class);
     }
-
 }

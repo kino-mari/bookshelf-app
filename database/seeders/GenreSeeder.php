@@ -8,7 +8,7 @@ use Illuminate\Database\Seeder;
 class GenreSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * ジャンルの初期データを登録する
      */
     public function run(): void
     {

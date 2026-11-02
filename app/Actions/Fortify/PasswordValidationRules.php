@@ -2,15 +2,14 @@
 
 namespace App\Actions\Fortify;
 
-use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 trait PasswordValidationRules
 {
     /**
-     * Get the validation rules used to validate passwords.
+     * パスワードのバリデーションルールを取得する
      *
-     * @return array<int, Rule|array<mixed>|string>
+     * @return array パスワードの入力チェックルール
      */
     protected function passwordRules(): array
     {

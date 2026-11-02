@@ -4,24 +4,22 @@ namespace App\Policies;
 
 use App\Models\Review;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class ReviewPolicy
 {
     /**
-     * Determine whether the user can update the model.
+     * ユーザーがレビューを更新できるか確認する
      */
     public function update(User $user, Review $review): bool
     {
-        return $user->id === $review->user_id;
+        return (int) $user->id === (int) $review->user_id;
     }
 
     /**
-     * Determine whether the user can delete the model.
+     * ユーザーがレビューを削除できるか確認する
      */
     public function delete(User $user, Review $review): bool
     {
-        return $user->id === $review->user_id;
+        return (int) $user->id === (int) $review->user_id;
     }
-
 }

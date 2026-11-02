@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ReviewRequest;
 use App\Models\Book;
 use App\Models\Review;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
-
 
 class ReviewController extends Controller
 {
@@ -29,7 +29,7 @@ class ReviewController extends Controller
 
     public function toggle(Review $review): RedirectResponse
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         // toggleメソッドで「いいね」の追加/解除を判別して切り替える
@@ -72,6 +72,4 @@ class ReviewController extends Controller
 
         return back()->with('success', 'レビューを削除しました。');
     }
-
-
 }

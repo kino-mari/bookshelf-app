@@ -13,11 +13,12 @@ class ResetUserPassword implements ResetsUserPasswords
     use PasswordValidationRules;
 
     /**
-     * Validate and reset the user's forgotten password.
+     * ユーザーのパスワードを検証し、新しいパスワードに再設定する
      *
-     * @param  array<string, string>  $input
+     * @param  User  $user  パスワードを再設定するユーザー
+     * @param  array<string, string>  $input  入力されたパスワード情報
      *
-     * @throws ValidationException
+     * @throws ValidationException バリデーションエラー
      */
     public function reset(User $user, array $input): void
     {

@@ -2,10 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\Book;
+use App\Models\Genre;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
-use App\Models\Genre;
 
 class GenreTest extends TestCase
 {
@@ -70,7 +71,7 @@ class GenreTest extends TestCase
     {
         $user = User::factory()->create();
         $genre = Genre::factory()->create();
-        $book = \App\Models\Book::factory()->create();
+        $book = Book::factory()->create();
 
         // 書籍とジャンルを紐付ける
         $book->genres()->attach($genre->id);

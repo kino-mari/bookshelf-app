@@ -9,7 +9,7 @@ use Illuminate\Database\Seeder;
 class ReviewLikeSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * レビューへのいいねの初期データを登録する
      */
     public function run(): void
     {

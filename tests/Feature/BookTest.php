@@ -2,17 +2,18 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-use App\Models\User;
 use App\Models\Book;
 use App\Models\Genre;
 use App\Models\Review;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Tests\TestCase;
 
 class BookTest extends TestCase
 {
     use RefreshDatabase;
+
     /**
      * ゲスト・認証ユーザーともに GET / または GET /books でアクセスでき、
      * 書籍が10件ずつページネーション表示され、ジャンルが表示されること。
@@ -41,7 +42,6 @@ class BookTest extends TestCase
             return $viewBooks->count() === 10;
         });
     }
-
 
     /**
      * ゲストでも GET /books/{book} でアクセスでき、詳細が表示されること。
@@ -170,12 +170,12 @@ class BookTest extends TestCase
     {
         Book::factory()->create([
             'title' => 'PHP入門',
-            'author' => '山田太郎'
+            'author' => '山田太郎',
         ]);
 
         Book::factory()->create([
             'title' => 'Laravel入門',
-            'author' => '佐藤花子'
+            'author' => '佐藤花子',
         ]);
 
         $response = $this->get('/books?keyword=山田太郎');
@@ -201,18 +201,18 @@ class BookTest extends TestCase
         $novelGenre = Genre::factory()->create(['name' => '小説']);
 
         $book = Book::factory()->create([
-            'title' => 'Laravel入門'
+            'title' => 'Laravel入門',
         ]);
 
-        $book->genres()->attach($genre);//genres()書籍に紐づくジャンルを取得するリレーション
+        $book->genres()->attach($genre); // genres()書籍に紐づくジャンルを取得するリレーション
 
         $novelBook = Book::factory()->create([
-            'title' => '吾輩は猫である'
+            'title' => '吾輩は猫である',
         ]);
 
         $novelBook->genres()->attach($novelGenre);
 
-        $response = $this->get('/books?genre=' . $genre->id);
+        $response = $this->get('/books?genre='.$genre->id);
 
         $response->assertSee('Laravel入門');
         $response->assertDontSee('吾輩は猫である');
@@ -220,7 +220,7 @@ class BookTest extends TestCase
 
     public function test_search_returns_no_books_when_keyword_does_not_match(): void
     {
-        Book::factory()->create(['title' => "小説"]);
+        Book::factory()->create(['title' => '小説']);
 
         $response = $this->get('/books?keyword=存在しない本');
 
@@ -480,4 +480,3 @@ class BookTest extends TestCase
         ]);
     }
 }
-

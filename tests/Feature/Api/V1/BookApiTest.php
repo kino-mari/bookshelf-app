@@ -4,9 +4,9 @@ namespace Tests\Feature\Api\V1;
 
 use App\Models\Book;
 use App\Models\Genre;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
 
 class BookApiTest extends TestCase
 {
@@ -32,6 +32,7 @@ class BookApiTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonCount(3, 'data');
     }
+
     /** AP02 */
     public function test_can_get_book_detail(): void
     {
@@ -42,13 +43,14 @@ class BookApiTest extends TestCase
         ]);
 
         // 書籍詳細APIにアクセス
-        $response = $this->getJson('/api/v1/books/' . $book->id);
+        $response = $this->getJson('/api/v1/books/'.$book->id);
 
         // 正常に取得できることを確認
         $response->assertStatus(200)
             ->assertJsonPath('data.title', 'Laravel API入門')
             ->assertJsonPath('data.author', 'テスト太郎');
     }
+
     /** AP02：存在しない書籍の場合 */
     public function test_returns_404_when_book_does_not_exist(): void
     {
@@ -175,7 +177,7 @@ class BookApiTest extends TestCase
 
         // 別のユーザーが書籍を更新しようとする
         $response = $this->withToken($token)
-            ->putJson('/api/v1/books/' . $book->id, [
+            ->putJson('/api/v1/books/'.$book->id, [
                 'title' => '不正に変更したタイトル',
                 'author' => $book->author,
                 'isbn' => $book->isbn,
@@ -213,7 +215,7 @@ class BookApiTest extends TestCase
 
         // 別のユーザーが書籍を削除しようとする
         $response = $this->withToken($token)
-            ->deleteJson('/api/v1/books/' . $book->id);
+            ->deleteJson('/api/v1/books/'.$book->id);
 
         // 削除できないことを確認
         $response->assertStatus(403);
@@ -245,7 +247,7 @@ class BookApiTest extends TestCase
 
         // 自分の書籍を更新
         $response = $this->withToken($token)
-            ->putJson('/api/v1/books/' . $book->id, [
+            ->putJson('/api/v1/books/'.$book->id, [
                 'title' => '更新後のタイトル',
                 'author' => $book->author,
                 'isbn' => $book->isbn,
@@ -282,7 +284,7 @@ class BookApiTest extends TestCase
 
         // 自分の書籍を削除
         $response = $this->withToken($token)
-            ->deleteJson('/api/v1/books/' . $book->id);
+            ->deleteJson('/api/v1/books/'.$book->id);
 
         // 削除成功を確認
         $response->assertStatus(200)

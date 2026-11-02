@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 class UserSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * ユーザーの初期データを登録する
      */
     public function run(): void
     {
@@ -37,4 +37,3 @@ class UserSeeder extends Seeder
         }
     }
 }
-

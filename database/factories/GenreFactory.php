@@ -2,16 +2,16 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Genre;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Genre>
+ * @extends Factory<Genre>
  */
 class GenreFactory extends Factory
 {
     /**
-     * Define the model's default state.
+     * ジャンルのダミーデータを定義する
      *
      * @return array<string, mixed>
      */

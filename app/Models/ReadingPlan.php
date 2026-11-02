@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ReadingPlanStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ReadingPlan extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'user_id',
         'book_id',
@@ -18,7 +20,7 @@ class ReadingPlan extends Model
     ];
 
     protected $casts = [
-        'status' => \App\Enums\ReadingPlanStatus::class,
+        'status' => ReadingPlanStatus::class,
         'due_date' => 'date',
         'completed_at' => 'datetime',
     ];
@@ -40,5 +42,4 @@ class ReadingPlan extends Model
     {
         return $this->due_date;
     }
-
 }

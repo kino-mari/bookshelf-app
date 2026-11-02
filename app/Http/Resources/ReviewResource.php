@@ -8,9 +8,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class ReviewResource extends JsonResource
 {
     /**
-     * Transform the resource into an array.
+     * レビュー情報をJSON形式に変換する
      *
-     * @return array<string, mixed>
+     * @return array<string, mixed> 変換後のレビュー情報
      */
     public function toArray(Request $request): array
     {

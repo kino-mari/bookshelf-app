@@ -156,7 +156,7 @@ class ReadingPlanTest extends TestCase
 
         $response = $this->actingAs($user)
             ->put(route('reading-plans.update', $plan), [
-                'target_date' => $newDate,
+                'due_date' => $newDate,
             ]);
 
         $response->assertRedirect(route('reading-plans.index'));
@@ -167,4 +167,3 @@ class ReadingPlanTest extends TestCase
         );
     }
 }
-

@@ -9,17 +9,15 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 class BookIndexRequest extends FormRequest
 {
     /**
-     * リクエストの認可判断
+     * リクエストを実行する権限があるか
      */
     public function authorize(): bool
     {
-        return true; // false から true に変更
+        return true;
     }
 
     /**
-     * クエリパラメータのバリデーションルール (AP01対応)
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * 検索パラメータのバリデーションルール
      */
     public function rules(): array
     {
@@ -32,28 +30,31 @@ class BookIndexRequest extends FormRequest
     }
 
     /**
-     * カスタムエラーメッセージ（任意）
+     * 日本語のエラーメッセージ
      */
     public function messages(): array
     {
         return [
-            'keyword.max' => '検索キーワードは255文字以内で指定してください',
-            'genre_id.integer' => 'ジャンルIDは数値で指定してください',
-            'genre_id.exists' => '指定されたジャンルが存在しません',
-            'page.integer' => 'ページ番号は整数で指定してください',
-            'per_page.max' => '1ページの取得件数は最大100件までです',
+            'keyword.max' => '検索キーワードは255文字以内で指定してください。',
+            'genre_id.integer' => 'ジャンルIDは数値で指定してください。',
+            'genre_id.exists' => '指定されたジャンルが存在しません。',
+            'page.integer' => 'ページ番号は整数で指定してください。',
+            'page.min' => 'ページ番号は1以上で指定してください。',
+            'per_page.integer' => '1ページの取得件数は整数で指定してください。',
+            'per_page.min' => '1ページの取得件数は1以上で指定してください。',
+            'per_page.max' => '1ページの取得件数は最大100件までです。',
         ];
     }
 
     /**
-     * API用にバリデーション失敗時、JSONレスポンス（422）を返却
+     * バリデーション失敗時にJSON形式の422レスポンスを返す
      */
-    protected function failedValidation(Validator $validator)
+    protected function failedValidation(Validator $validator): void
     {
         throw new HttpResponseException(
             response()->json([
                 'status' => 'error',
-                'message' => 'リクエストパラメータが不正です',
+                'message' => 'リクエストパラメータが不正です。',
                 'errors' => $validator->errors(),
             ], 422)
         );

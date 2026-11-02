@@ -8,7 +8,7 @@ use Throwable;
 class Handler extends ExceptionHandler
 {
     /**
-     * The list of the inputs that are never flashed to the session on validation exceptions.
+     * バリデーションエラー発生時にセッションへ保存しない入力項目
      *
      * @var array<int, string>
      */
@@ -19,7 +19,7 @@ class Handler extends ExceptionHandler
     ];
 
     /**
-     * Register the exception handling callbacks for the application.
+     * アプリケーションの例外処理に関するコールバックを登録する
      */
     public function register(): void
     {

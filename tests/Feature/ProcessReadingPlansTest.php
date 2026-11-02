@@ -5,10 +5,10 @@ namespace Tests\Feature;
 use App\Models\Book;
 use App\Models\ReadingPlan;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use App\Notifications\ReadingPlanReminder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Tests\TestCase;
 
 class ProcessReadingPlansTest extends TestCase
 {

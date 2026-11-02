@@ -2,61 +2,90 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Http\Requests\GenreRequest;
 use App\Models\Genre;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class GenreController extends Controller
 {
-    public function index()
+    /**
+     * ジャンル一覧を表示する
+     */
+    public function index(): View
     {
         $genres = Genre::withCount('books')->get();
+
         return view('genres.index', compact('genres'));
     }
 
-    public function create()
+    /**
+     * ジャンル登録画面を表示する
+     */
+    public function create(): View
     {
         return view('genres.create');
     }
 
-    public function show(Genre $genre)
+    /**
+     * ジャンルに紐付く書籍を表示する
+     */
+    public function show(Genre $genre): View
     {
         $books = $genre->books()->paginate(10);
 
         return view('genres.show', compact('genre', 'books'));
     }
 
-    public function store(GenreRequest $request)
+    /**
+     * ジャンルを登録する
+     */
+    public function store(GenreRequest $request): RedirectResponse
     {
         $validated = $request->validated();
+
         Genre::create($validated);
-        return redirect()->route('genres.index')->with('success', 'ジャンルを登録しました。');
-        ;
+
+        return redirect()
+            ->route('genres.index')
+            ->with('success', 'ジャンルを登録しました。');
     }
 
-    public function edit(Genre $genre)
+    /**
+     * ジャンル編集画面を表示する
+     */
+    public function edit(Genre $genre): View
     {
         return view('genres.edit', compact('genre'));
     }
 
+    /**
+     * ジャンルを更新する
+     */
     public function update(GenreRequest $request, Genre $genre): RedirectResponse
     {
         $genre->update($request->validated());
-        return redirect()->route('genres.index', $genre)->with('success', 'ジャンルを更新しました。');
+
+        return redirect()
+            ->route('genres.index')
+            ->with('success', 'ジャンルを更新しました。');
     }
 
+    /**
+     * ジャンルを削除する
+     */
     public function destroy(Genre $genre): RedirectResponse
     {
         if ($genre->books()->exists()) {
-            // 書籍が紐付いている場合は削除を制限し、エラーメッセージとともに戻る
-            return redirect()->route('genres.index')
+            return redirect()
+                ->route('genres.index')
                 ->with('error', '書籍が紐付いているため、このジャンルは削除できません。');
         }
 
         $genre->delete();
 
-        return redirect()->route('genres.index')->with('success', 'ジャンルを削除しました。');
+        return redirect()
+            ->route('genres.index')
+            ->with('success', 'ジャンルを削除しました。');
     }
 }

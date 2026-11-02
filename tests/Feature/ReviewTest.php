@@ -2,16 +2,16 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
-use App\Models\User;
 use App\Models\Book;
 use App\Models\Review;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class ReviewTest extends TestCase
 {
     use RefreshDatabase;
+
     /**
      * レビュー投稿（ゲスト制限およびログインユーザーによる投稿保存）
      */
@@ -33,7 +33,7 @@ class ReviewTest extends TestCase
             'comment' => '素晴らしい本でした！',
         ]);
 
-        //3.データベースへの保存確認
+        // 3.データベースへの保存確認
         $this->assertDatabaseHas('reviews', [
             'book_id' => $book->id,
             'user_id' => $user->id,
@@ -41,7 +41,6 @@ class ReviewTest extends TestCase
             'comment' => '素晴らしい本でした！',
         ]);
     }
-
 
     /**
      * レビューの更新・削除および投稿者以外の認可制御
