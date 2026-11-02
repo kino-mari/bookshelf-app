@@ -60,6 +60,7 @@ erDiagram
     users ||--o{ book_user : ""
     users ||--o{ review_likes : ""
     users ||--o{ reading_plans : ""
+    users ||--o{ notifications : ""
 
     books ||--o{ reviews : ""
     books ||--o{ book_genre : ""
@@ -473,7 +474,3 @@ sail pint
 ## 14. GitHub
 
 - GitHub：https://github.com/kino-mari/bookshelf-app
-
-```
-
-```
