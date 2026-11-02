@@ -55,19 +55,19 @@ BookShelfは、書籍の登録・検索・レビュー・お気に入り管理�
 
 ```mermaid
 erDiagram
-    users ||--o{ books : "登録"
-    users ||--o{ reviews : "投稿"
-    users ||--o{ book_user : "お気に入り"
-    users ||--o{ review_likes : "いいね"
-    users ||--o{ reading_plans : "読書計画"
+    users ||--o{ books : ""
+    users ||--o{ reviews : ""
+    users ||--o{ book_user : ""
+    users ||--o{ review_likes : ""
+    users ||--o{ reading_plans : ""
 
-    books ||--o{ reviews : "レビュー"
-    books ||--o{ book_genre : "ジャンル"
-    books ||--o{ book_user : "お気に入り"
-    books ||--o{ reading_plans : "読書計画"
+    books ||--o{ reviews : ""
+    books ||--o{ book_genre : ""
+    books ||--o{ book_user : ""
+    books ||--o{ reading_plans : ""
 
-    genres ||--o{ book_genre : "分類"
-    reviews ||--o{ review_likes : "いいね"
+    genres ||--o{ book_genre : ""
+    reviews ||--o{ review_likes : ""
 
     users {
         bigint_unsigned id PK
@@ -425,7 +425,6 @@ sail artisan queue:work database --tries=3
 
 スケジュール処理を起動する場合は、以下を実行します。
 
-````markdown
 ```bash
 sail artisan schedule:work
 ```
@@ -441,7 +440,6 @@ Laravelのテスト機能を使用して、機能ごとの動作確認を行い�
 ```bash
 sail artisan test
 ```
-````
 
 ### カバレッジ確認
 
@@ -475,3 +473,7 @@ sail pint
 ## 14. GitHub
 
 - GitHub：https://github.com/kino-mari/bookshelf-app
+
+```
+
+```
