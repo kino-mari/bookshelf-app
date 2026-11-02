@@ -17,6 +17,12 @@ class ReadingPlan extends Model
         'completed_at',
     ];
 
+    protected $casts = [
+        'status' => \App\Enums\ReadingPlanStatus::class,
+        'due_date' => 'date',
+        'completed_at' => 'datetime',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -25,6 +31,14 @@ class ReadingPlan extends Model
     public function book(): BelongsTo
     {
         return $this->belongsTo(Book::class);
+    }
+
+    /**
+     * Bladeで使うtarget_dateをdue_dateに対応させる
+     */
+    public function getTargetDateAttribute()
+    {
+        return $this->due_date;
     }
 
 }

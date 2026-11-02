@@ -18,6 +18,7 @@ class ReadingPlanController extends Controller
      */
     public function index(Request $request): View
     {
+        // ログインユーザーの読書計画を取得する
         $query = ReadingPlan::with('book')
             ->where('user_id', Auth::id());
 
@@ -26,13 +27,21 @@ class ReadingPlanController extends Controller
             $query->where('status', $request->status);
         }
 
-        // 新しい順に10件ずつ表示
-        $plans = $query->latest()->paginate(10);
+        // ページネーション
+        $readingPlans = $query->latest()->paginate(10);
 
-        // ページ移動後も検索条件を維持
-        $plans->appends($request->query());
+        // 絞り込み条件をページ移動後も維持する
+        $readingPlans->appends($request->query());
 
-        return view('reading-plans.index', compact('plans'));
+        // Bladeに渡す現在の絞り込み状態
+        $currentStatus = $request->filled('status')
+            ? (int) $request->status
+            : null;
+
+        return view('reading-plans.index', compact(
+            'readingPlans',
+            'currentStatus'
+        ));
     }
 
     /**
@@ -53,7 +62,7 @@ class ReadingPlanController extends Controller
             'user_id' => Auth::id(),
             'book_id' => $request->book_id,
             'due_date' => $request->due_date,
-            'status' => 'unread',
+            'status' => 0,
         ]);
 
         return redirect()
@@ -69,12 +78,10 @@ class ReadingPlanController extends Controller
         $this->authorize('update', $plan);
 
         $plan->update([
-            'book_id' => $request->book_id,
-            'due_date' => $request->due_date,
+            'due_date' => $request->target_date,
         ]);
 
-        return redirect()
-            ->route('reading-plans.index')
+        return redirect()->route('reading-plans.index')
             ->with('success', '読書計画を更新しました。');
     }
 
@@ -86,7 +93,9 @@ class ReadingPlanController extends Controller
     {
         $this->authorize('update', $plan);
 
-        return view('reading-plans.edit', compact('plan'));
+        $readingPlan = $plan;
+
+        return view('reading-plans.edit', compact('readingPlan'));
     }
 
     /**
@@ -97,7 +106,7 @@ class ReadingPlanController extends Controller
         $this->authorize('update', $plan);
 
         $plan->update([
-            'status' => 'completed',
+            'status' => 2,
             'completed_at' => now(),
         ]);
 

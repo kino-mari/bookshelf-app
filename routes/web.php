@@ -23,7 +23,6 @@ Route::middleware('auth')->group(function () {
     //書籍登録
     Route::post('/books', [BookController::class, 'store'])->name('books.store');
     Route::get('/books/isbn/{isbn}', [BookController::class, 'searchByIsbn'])
-        ->where('isbn', '[0-9]{13}')
         ->name('books.isbn');
     //お気に入りトグル
     Route::post('/books/{book}/favorites', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
@@ -68,6 +67,8 @@ Route::middleware('auth')->group(function () {
     // 新規計画作成画面・処理
     Route::get('/reading-plans/create', [ReadingPlanController::class, 'create'])->name('reading-plans.create');
     Route::post('/reading-plans', [ReadingPlanController::class, 'store'])->name('reading-plans.store');
+    // 読書計画の更新処理
+    Route::put('/reading-plans/{plan}', [ReadingPlanController::class, 'update'])->name('reading-plans.update');
     // 編集画面
     Route::get('/reading-plans/{plan}/edit', [ReadingPlanController::class, 'edit'])->name('reading-plans.edit');
     // 「読了する」ボタン（POST）

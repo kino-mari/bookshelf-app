@@ -5,14 +5,14 @@ erDiagram
     users ||--o{ books : ""
     users ||--o{ reviews : ""
     users ||--o{ book_user : ""
-    users ||--o{ review_likes : ""
+    users ||--o{ review_user : ""
 
     books ||--o{ reviews : ""
     books ||--o{ book_genre : ""
     books ||--o{ book_user : ""
 
     genres ||--o{ book_genre : ""
-    reviews ||--o{ review_likes : ""
+    reviews ||--o{ review_user : ""
 
     users {
         bigint_unsigned id PK
@@ -38,7 +38,7 @@ erDiagram
         varchar_255 title
         varchar_255 author
         varchar_13 isbn UK
-        date published_date
+        date published_at
         text description
         varchar_255 image_url
         timestamp created_at
@@ -71,7 +71,7 @@ erDiagram
         timestamp updated_at
     }
 
-    review_likes {
+    review_user {
         bigint_unsigned id PK
         bigint_unsigned user_id FK
         bigint_unsigned review_id FK

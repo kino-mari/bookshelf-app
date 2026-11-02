@@ -35,27 +35,30 @@ class ReadingPlanRequest extends FormRequest
     {
         $plan = $this->route('plan');
 
-        // 同じユーザーの重複登録をチェック
-        $bookRule = Rule::unique('reading_plans', 'book_id')
-            ->where(fn($query) => $query->where(
-                'user_id',
-                $this->user()->id
-            ));
-
-        // 編集時は自分自身のデータを除外
-        if ($plan !== null) {
-            $bookRule->ignore($plan->id);
+        // 新規登録の場合
+        if ($plan === null) {
+            return [
+                'book_id' => [
+                    'required',
+                    'integer',
+                    'exists:books,id',
+                    Rule::unique('reading_plans', 'book_id')
+                        ->where(fn($query) => $query->where(
+                            'user_id',
+                            $this->user()->id
+                        )),
+                ],
+                'due_date' => [
+                    'required',
+                    'date',
+                    'after_or_equal:today',
+                ],
+            ];
         }
 
+        // 編集の場合
         return [
-            'book_id' => [
-                'required',
-                'integer',
-                'exists:books,id',
-                $bookRule,
-            ],
-
-            'due_date' => [
+            'target_date' => [
                 'required',
                 'date',
                 'after_or_equal:today',
@@ -63,9 +66,6 @@ class ReadingPlanRequest extends FormRequest
         ];
     }
 
-    /**
-     * エラーメッセージ
-     */
     public function messages(): array
     {
         return [
@@ -77,6 +77,10 @@ class ReadingPlanRequest extends FormRequest
             'due_date.required' => '読了予定日を入力してください。',
             'due_date.date' => '正しい日付を入力してください。',
             'due_date.after_or_equal' => '読了予定日は今日以降の日付を指定してください。',
+
+            'target_date.required' => '読了予定日を入力してください。',
+            'target_date.date' => '正しい日付を入力してください。',
+            'target_date.after_or_equal' => '読了予定日は今日以降の日付を指定してください。',
         ];
     }
 }

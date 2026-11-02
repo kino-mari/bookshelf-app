@@ -2,15 +2,11 @@
 
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue; // キューを使う場合に必要
 use Illuminate\Notifications\Notification;
 use App\Models\ReadingPlan;
 
-class ReadingPlanReminder extends Notification implements ShouldQueue // ← implements ShouldQueue を追加
+class ReadingPlanReminder extends Notification
 {
-    use Queueable;
-
     protected $readingPlan;
 
     // コンストラクタで対象の読書計画を受け取る
@@ -25,7 +21,7 @@ class ReadingPlanReminder extends Notification implements ShouldQueue // ← imp
         return ['database'];
     }
 
-    // データベースに保存する内容（toArrayを使用）
+    // データベースに保存する内容
     public function toArray($notifiable): array
     {
         return [
